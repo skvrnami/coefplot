@@ -115,7 +115,7 @@ matchCoefs.default <- function(model, ...)
     factorMat <- as.data.frame(attr(theTerms, "factor"))
     # add column from rownames as identifier
     factorMat$.Pred <- rownames(factorMat)
-    factorMat$.Type <- attr(theTerms, "dataClasses")
+    factorMat$.Type <- attr(theTerms, "dataClasses")[names(attr(theTerms, "dataClasses")) != "(weights)"]
     
     # melt it down for comparison
     factorMelt <- melt(factorMat, id.vars=c(".Pred", ".Type"), variable.name="Term")

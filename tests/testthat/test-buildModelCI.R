@@ -6,7 +6,9 @@ library(xgboost)
 data(diamonds, package='ggplot2')
 
 model1 <- lm(price ~ carat + cut, data=diamonds)
+model2 <- lm(price ~ carat + cut, data=diamonds, weights = rep(1, nrow(diamonds)))
 ci1 <- coefplot:::buildModelCI(model1)
+ci2 <- coefplot:::buildModelCI(model2, predictors = "carat")
 
 diaX <- useful::build.x(price ~ carat + cut + x, data=diamonds, contrasts=FALSE)
 diaY <- useful::build.y(price ~ carat + cut + x, data=diamonds)
@@ -29,6 +31,7 @@ correctNames <- c('Value', 'Coefficient', 'HighInner', 'LowInner', 'HighOuter', 
 
 test_that('buildModelCI returns a data.frame', {
     expect_is(ci1, 'data.frame')
+    expect_is(ci2, 'data.frame')
     expect_is(xgCI, 'tbl')
     expect_is(xgCI_named, 'tbl')
     expect_is(coefG1, 'data.frame')
@@ -36,16 +39,19 @@ test_that('buildModelCI returns a data.frame', {
 
 test_that('buildModelCI returns correct number and names of columns', {
     expect_length(ci1, 7)
+    expect_length(ci2, 7)
     expect_length(xgCI, 7)
     expect_length(xgCI_named, 7)
     expect_length(coefG1, 7)
     
     expect_named(ci1)
+    expect_named(ci2)
     expect_named(xgCI)
     expect_named(xgCI_named)
     expect_named(coefG1)
     
     expect_equal(names(ci1), correctNames)
+    expect_equal(names(ci2), correctNames)
     expect_equal(names(xgCI), correctNames)
     expect_equal(names(xgCI_named), correctNames)
     expect_equal(names(coefG1), correctNames)
@@ -54,6 +60,7 @@ test_that('buildModelCI returns correct number and names of columns', {
 
 test_that('buildModelCI returns correct number of rows', {
     expect_equal(nrow(ci1), 6)
+    expect_equal(nrow(ci2), 1)
     expect_equal(nrow(xgCI), 8)
     expect_equal(nrow(xgCI_named), 8)
     expect_equal(nrow(coefG1), 5)
